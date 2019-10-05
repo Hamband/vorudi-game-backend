@@ -1,0 +1,4 @@
+*.pyc
+db.sqlite3
+.idea/
+vorudi_game/local_settings.py
