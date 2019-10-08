@@ -11,16 +11,19 @@ class Category(models.Model):
     accept_point = models.IntegerField()
     reject_point = models.IntegerField()
     skip_point = models.IntegerField()
+    hint_point = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
 
     def to_dict(self):
         return {
+            'id': self.pk,
             'name': self.name,
             'accept_point': self.accept_point,
             'reject_point': self.reject_point,
-            'skip_point': self.skip_point
+            'skip_point': self.skip_point,
+            'hint_point': self.hint_point,
         }
 
 
@@ -32,6 +35,7 @@ class Problem(models.Model):
     statement = models.TextField()
     solutions = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    hint = models.TextField(default='')
 
     def __str__(self):
         return '{} (Solution: {})'.format(self.statement, self.solutions)
@@ -51,14 +55,16 @@ class Team(AbstractUser):
     team_members = models.TextField(default='')
     score = models.IntegerField(default=0)
     current_problem = models.ForeignKey(Problem, on_delete=models.CASCADE,
-                                        null=True)
+                                        null=True, blank=True)
+    hint = models.BooleanField(default=False)
 
     def to_dict(self):
         return {
             'username': self.username,
             'team_members': self.team_members,
             'score': self.score,
-            'current_problem': self.current_problem if self.current_problem else None
+            'current_problem': self.current_problem.to_dict() if self.current_problem else None,
+            'hint': self.current_problem.hint if self.hint and self.current_problem else None,
         }
 
     def skip_problem(self):
@@ -70,6 +76,7 @@ class Team(AbstractUser):
         skip_submission.save()
         self.score += self.current_problem.category.skip_point
         self.current_problem = None
+        self.hint = False
         self.save()
 
 
@@ -93,3 +100,16 @@ class Submission(models.Model):
 
     def __str__(self):
         return 'سوال:{} تیم:{} راه حل:{} وضعیت: {}'.format(self.problem, self.user, self.solution, self.status)
+
+
+class RewardCode(models.Model):
+    class Meta:
+        verbose_name = 'کد جایزه'
+        verbose_name_plural = 'کدهای جایزه'
+
+    code = models.CharField(max_length=100)
+    points = models.IntegerField()
+    is_used = models.BooleanField()
+
+    def __str__(self):
+        return '{} ({})'.format(self.code, self.points)

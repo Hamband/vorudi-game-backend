@@ -21,12 +21,14 @@ def check_and_add_solution(user, solution):
 
     if accepted:
         user.score += problem.category.accept_point
+        user.hint = False
     else:
         user.score += problem.category.reject_point
     user.save()
     submission = Submission()
-    submission.problem = None
+    submission.problem = problem
     submission.user = user
     submission.solution = solution
     submission.status = Submission.ACCEPTED_SUBMISSION if accepted else Submission.REJECTED_SUBMISSION
     submission.save()
+    return accepted
