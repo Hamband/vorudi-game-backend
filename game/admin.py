@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from .models import Submission, Team, Problem, Category, RewardCode
+from .models import Submission, Team, Problem, Category, RewardCode, AdminSetting
 
 
 class TeamAdmin(UserAdmin):
@@ -28,3 +28,4 @@ admin.site.register(Submission)
 admin.site.register(Problem)
 admin.site.register(Category)
 admin.site.register(RewardCode)
+admin.site.register(AdminSetting)

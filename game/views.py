@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 
-from game.middlewares import is_logged_in
+from game.middlewares import is_logged_in, is_open
 from game.models import Submission, Problem, Category, RewardCode, Team
 from game.utils import check_and_add_solution, get_solutions
 
@@ -45,6 +45,7 @@ def is_login(request):
 
 @api_view(["POST"])
 @is_logged_in
+@is_open
 def get_new_problem(request):
     if 'category' not in request.data:
         return JsonResponse({
@@ -86,6 +87,7 @@ def get_new_problem(request):
 
 @api_view(["POST"])
 @is_logged_in
+@is_open
 def make_new_try(request):
     if 'solution' not in request.data:
         return JsonResponse({
@@ -120,6 +122,7 @@ def make_new_try(request):
 
 @api_view(["POST"])
 @is_logged_in
+@is_open
 def check_reward_code(request):
     if 'code' not in request.data:
         return JsonResponse({
@@ -145,6 +148,7 @@ def check_reward_code(request):
 
 @api_view(["GET"])
 @is_logged_in
+@is_open
 def get_hint(request):
     if request.user.hint:
         return JsonResponse({

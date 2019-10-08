@@ -113,3 +113,11 @@ class RewardCode(models.Model):
 
     def __str__(self):
         return '{} ({})'.format(self.code, self.points)
+
+
+class AdminSetting(models.Model):
+    name = models.CharField(max_length=100)
+    value = models.BooleanField()
+
+    def __str__(self):
+        return self.name

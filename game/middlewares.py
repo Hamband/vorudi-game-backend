@@ -2,6 +2,8 @@ import json
 
 from django.http import JsonResponse, QueryDict, HttpResponse
 
+from game.models import AdminSetting
+
 
 def is_logged_in(get_response):
     def middleware(request):
@@ -13,6 +15,19 @@ def is_logged_in(get_response):
         response = get_response(request)
 
         return response
+
+    return middleware
+
+
+def is_open(get_response):
+    def middleware(request):
+        setting = AdminSetting.objects.filter(name='is_open').first()
+        if setting and not setting.value:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'زمان برگزاری بازی نیست!'
+            })
+        return get_response(request)
 
     return middleware
 
